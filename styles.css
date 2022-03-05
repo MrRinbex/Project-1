@@ -14,96 +14,136 @@
     max-height: 100vh;
 }
 body{
-    background-color: #111;
+    background: url(./images/sky-full-of-stars.jpg);
+    background-size: contain;
+    background-repeat: repeat;
+    animation: scroll 70s linear infinite;
 }
 header{
     padding-top: 10vmin;
 }
 h1{
     font-size: 9rem;
-    text-shadow: 0 0 5px #a16f11, 0 0 15px rgb(167, 115, 19), 0 0 20px rgb(158, 109, 18), 0 0 40px #ffa500, 0 0 60px #ff0000, 0 0 10px #ff8d00, 0 0 98px #ff0000;
-    color: #cebb0e;
+    text-shadow: 0 0 5px #b91382, 0 0 15px #a50d72, 0 0 20px #581040, 0 0 40px #220318, 0 0 60px #9e8997, 0 0 10px blanchedalmond, 0 0 98px #b91382;
+    color: blanchedalmond;
     text-align: center;
     animation: blink 9s infinite;
     -webkit-animation: blink 12s infinite;
 }
-/* h1{
-    text-align: center;
-    text-transform: uppercase;
-    font-size: 7rem;
-} */
 main{
     display: flex;
     flex-direction: row;
     justify-content: center;
     margin-left: 25vmin;
     margin-right: 25vmin;
-    margin-top: 10vmin;
-    margin-bottom: 5vmin;
+    padding-top: 10vmin;
+    padding-bottom: 15vmin;
     height: 1000px;
 }
+    /* need adjust height for 2 block presentation and game-platform */
 #presentation{
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     border: 1px solid blanchedalmond;
-    height: 800px;
-    width: 58%;
-    background-color: #111;
+    height: 100%;
+    width: 40%;
+    max-width: 1000px;
+    margin-right: 10px;
+    background: url(./images/bg-anim.png);
+    background-color: #220318;
+    background-size: contain;
+    background-repeat: no-repeat; 
+    /* need work in background animation like deeping in out */
+    background-position: top; 
 }
 #game-platform{
     border: 1px solid blanchedalmond;
-    width: 100%;
+    width: 70%;
     max-height: 100vh;
 }
 .head{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-
 }
 .astronaute{
-    width: 100%;
+    width: 60%;
 }
 .astronaute img{
-    width: 370px;
-    padding: 7%;
+    width: 100%;
+    min-width: 250px;
+    padding-top: 10%;
 }
 .speech{
+    width: 100%;
+    display: block;
+    text-align: center;
+}
+.speech p{
+    text-align: center;
+    margin: auto;
     font-weight: 700;
     text-align: start;
-    font-size: 3rem;
+    font-size:inherit;
+    width: max-content;
     text-transform: uppercase;
-    background: linear-gradient(90deg, rgb(182, 21, 21), #fff, #2b3fb1);
+    background: linear-gradient(90deg, #b91382, #fff, blanchedalmond);
     letter-spacing: 5px;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     background-repeat: no-repeat;
     background-size: 80%;
-    animation: mamacyta 15s linear infinite;
+    animation: mamacyta 10s linear infinite;
+    padding-bottom: 10px;
+    font-style: italic;
 }
 .btn-score{
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
+    width: 100%;
 }
 .score{
     color: blanchedalmond;
-    font-size: 10rem;                
+    font-size: 1.8rem;  
+    display: flex;
+    flex-direction: row;
 }
+.score p{
+    padding-right: 10px;
+    font-size: 1.8rem;
+}
+.score p::first-letter{
+    color: #b91382;
+}
+
 button{
-    margin-right: 160px;
+    min-height: 50px;
+    min-width: 130px;
+    background-color: blanchedalmond;
+    border: 1px solid blanchedalmond;
+    border-radius: 10px 10px 10px 10px;
+    font-size: 100%;
+    overflow: visible;
+    box-shadow: 0 0.5em 0.5em -0.4em #b91382;
+}
+ /* need to work on the btn */
+
+.button:hover, .button:hover {
+    box-shadow: 0 0.5em 0.5em -0.4em #b91382;
+    transform: translateY(-0.25em);
 }
 .btn-start{
-    font-size: 4rem;
+    font-size: 1.5rem;
+    text-decoration: none;
     font-style: none;
     padding: 3px;
     position: relative;
-    color: #a16f11;
-    border:3px solid blanchedalmond;
-    border-radius: 10px 10px 10px 10px;
+    color: #b91382;
+    background-color: blanchedalmond;
 }
 #canvas{
     background: url(./images/background1.gif);
@@ -111,7 +151,7 @@ button{
     background-repeat: repeat;
     height: 100%;
     width: 100%;
-    animation: scroll 70s linear infinite;
+    animation: scroll 70s linear infinite reverse;
 
 }
 @keyframes scroll {
@@ -138,8 +178,8 @@ button{
   }
   0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% 
   {
-  text-shadow: 0 0 5px #ffa500, 0 0 15px #ffa500, 0 0 20px #ffa500, 0 0 40px #ffa500, 0 0 60px #ff0000, 0 0 10px #ff8d00, 0 0 98px #ff0000;
-    color: #fff6a9;
+    text-shadow: 0 0 5px #b91382, 0 0 15px #a50d72, 0 0 20px #581040, 0 0 40px #220318, 0 0 60px #9e8997, 0 0 10px blanchedalmond, 0 0 98px #b91382;
+    color: blanchedalmond;
   }
 }
 @keyframes blink {
@@ -150,8 +190,8 @@ button{
   }
   0%, 19%, 21%, 23%,25%,54%,56%,100% 
   {
-  text-shadow: 0 0 5px #ffa500, 0 0 15px #ffa500, 0 0 20px #ffa500, 0 0 40px #ffa500, 0 0 60px #ff0000, 0 0 10px #ff8d00, 0 0 98px #ff0000;
-    color: #fff6a9;
+    text-shadow: 0 0 5px #b91382, 0 0 15px #a50d72, 0 0 20px #581040, 0 0 40px #220318, 0 0 60px #9e8997, 0 0 10px blanchedalmond, 0 0 98px #b91382;
+    color: blanchedalmond ;
   }
 }
 
