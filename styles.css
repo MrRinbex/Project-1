@@ -23,7 +23,7 @@ header{
     padding-top: 10vmin;
 }
 h1{
-    font-size: 9rem;
+    font-size: 4vw;
     text-shadow: 0 0 5px #b91382, 0 0 15px #a50d72, 0 0 20px #581040, 0 0 40px #220318, 0 0 60px #9e8997, 0 0 10px blanchedalmond, 0 0 98px #b91382;
     color: blanchedalmond;
     text-align: center;
@@ -46,9 +46,8 @@ main{
     flex-direction: column;
     justify-content: space-evenly;
     border: 1px solid blanchedalmond;
-    height: 100%;
-    width: 40%;
-    max-width: 1000px;
+    min-width: 35vw;
+    min-height: 45vh;
     margin-right: 10px;
     background: url(./images/bg-anim.png);
     background-color: #220318;
@@ -59,8 +58,8 @@ main{
 }
 #game-platform{
     border: 1px solid blanchedalmond;
-    width: 70%;
-    max-height: 100vh;
+    min-width: 45vw;
+    min-height: 45vh;
 }
 .head{
     display: flex;
@@ -86,7 +85,7 @@ main{
     font-weight: 700;
     text-align: start;
     font-size:inherit;
-    width: max-content;
+    width: inherit;
     text-transform: uppercase;
     background: linear-gradient(90deg, #b91382, #fff, blanchedalmond);
     letter-spacing: 5px;
@@ -96,7 +95,8 @@ main{
     background-repeat: no-repeat;
     background-size: 80%;
     animation: mamacyta 10s linear infinite;
-    margin-top: 10%;
+    margin-top: 50px;
+    margin-left: 50px;
     overflow-wrap: break-word;
     font-style: italic;
 }

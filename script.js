@@ -13,7 +13,7 @@ function clearCanvas() {
 // player creation
 class Player {
     constructor(){
-        const ref = 0.27   // ref is like scale or width of the img to ajuste !
+        const ref = 0.17   // ref is like scale or width of the img to ajuste !
         const image = new Image()
         image.src = "./images/space-shuttle-player.png"
         // func to onload the frames of the image
@@ -52,7 +52,7 @@ const player = new Player();
 // ufo creation
 class Ufo {
     constructor(){
-        const ref = 0.4   
+        const ref = 0.24   
         const image = new Image()
         image.src = "./images/ufo.png"
         image.onload = () =>{
@@ -88,12 +88,15 @@ const key = {
     ArrowLeft: {pressed: false},
     q: {pressed: false},
     z: {pressed: false},
-    s: {pressed: false}
+    s: {pressed: false},
+    ArrowUp: {pressed: false},
+    ArrowDown: {pressed: false}
 }
 // creation right rocket 
 class Missile1{
     constructor(){
-        const ref = 0.14
+        const visible = false
+        const ref = 0.1
         const image = new Image()
         image.src = "./images/MissileRight.png"
         image.onload = () =>{
@@ -101,8 +104,8 @@ class Missile1{
             this.width = image.width * ref
             this.height = image.height * ref
             this.position = {
-                x: player.position.x - this.width + 220,
-                y: player.position.y - this.height + 250
+                x: player.position.x - this.width + 165,
+                y: player.position.y - this.height + 160
             };
         }
         this.speed = {
@@ -114,7 +117,7 @@ class Missile1{
         ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
     }
     refresh(){
-        if(this.image){
+        if(this.image && this.visible === true){
             this.draw()
             this.position.x += this.speed.x
             this.position.y += this.speed.y
@@ -127,7 +130,8 @@ const missile1 = [new Missile1()]
 // creation left rocket 
 class Missile2{
     constructor(){
-        const ref = 0.14 
+        const visible = false
+        const ref = 0.1
         const image = new Image()
         image.src = "./images/MissileLeft.png"
         image.onload = () =>{
@@ -135,8 +139,8 @@ class Missile2{
             this.width = image.width * ref
             this.height = image.height * ref
             this.position = {
-                x: player.position.x,
-                y: player.position.y - this.height + 250
+                x: player.position.x - this.width + 50,
+                y: player.position.y - this.height + 160
             };
         }
         this.speed = {
@@ -148,10 +152,11 @@ class Missile2{
         ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
     }
     refresh(){
-        if(this.image){
+        if(this.image && this.visible === true){
             this.draw()
             this.position.x += this.speed.x
             this.position.y += this.speed.y
+            
         }
     }
 }
@@ -159,38 +164,47 @@ const missile2 = [new Missile2()]
 
 // here is the engine of the game =)
 animation = () => {
+    
     requestAnimationFrame(animation)
+    clearCanvas()
     player.refresh();
     ufo.refresh();
-    if (key.z.pressed){
-        missile1.forEach((rocket)=> {
-            rocket.speed.y = -10
-            rocket.refresh()
-        })
-    } else{ 
-        missile1.forEach((rocket)=> {
-            rocket.refresh()
-        })
-    }
+    missile1.forEach((rocket)=> {
+        rocket.refresh()
+    })
+    missile2.forEach((rocket)=> {
+        rocket.refresh()
+    })
 
-    if (key.s.pressed){
-        missile2.forEach((rocket)=> {
-            rocket.speed.y = -3
-            rocket.refresh()
-        })
-    } else{ 
-        missile2.forEach((rocket)=> {
-            rocket.refresh()
-        })
-    }
-
+    // if (key.z.pressed || key.ArrowUp.pressed){
+    //     missile1.forEach((rocket)=> {
+    //         rocket.speed.y = -10
+    //         rocket.refresh()
+    //     })
+    // } else{ 
+    //     missile1.forEach((rocket)=> {
+    //         rocket.refresh()
+    //     })
+    // }
+    
+    // if (key.s.pressed || key.ArrowDown.pressed){
+    //     missile2.forEach((rocket)=> {
+    //         rocket.speed.y = -3
+    //         rocket.refresh()
+    //     })
+    // } else{ 
+    //     missile2.forEach((rocket)=> {
+    //         rocket.refresh()
+    //     })
+    // }
+    
     if((key.ArrowRight.pressed || key.d.pressed) && player.position.x + player.width <= canvas.width )
-        player.speed.x = 9 
+    player.speed.x = 9 
     else if((key.ArrowLeft.pressed || key.q.pressed ) && player.position.x >= 0)
-        player.speed.x = -9
+    player.speed.x = -9
     else
-        player.speed.x = 0
-
+    player.speed.x = 0
+    
     
     // remove drow method and it will be in refresh method => to every time refresh that draw
 }
@@ -215,10 +229,39 @@ switch(event.key){
     case "z":
         key.z.pressed = true    
         missile1.push(new Missile1())
+        missile1.forEach((rocket)=> {
+            rocket.visible = true
+            rocket.speed.y = -10
+            rocket.refresh()
+        })
         break
     case "s":
         key.s.pressed = true    
         missile2.push(new Missile2())
+        clearCanvas()
+        missile2.forEach((rocket)=> {
+            rocket.visible = true
+            rocket.speed.y = -2
+            rocket.refresh()
+        })
+        break
+    case "ArrowUp":
+        key.ArrowUp.pressed = true    
+        missile1.push(new Missile1())
+        missile1.forEach((rocket)=> {
+            rocket.visible = true
+            rocket.speed.y = -10
+            rocket.refresh()
+        })
+        break
+    case "ArrowDown":
+        key.ArrowDown.pressed = true    
+        missile2.push(new Missile2())
+        missile2.forEach((rocket)=> {
+            rocket.visible = true
+            rocket.speed.y = -2
+            rocket.refresh()
+        })
         break
        
         }
@@ -245,6 +288,12 @@ switch(event.key){
         case "s":
                 key.s.pressed = false    
             break
+        case "ArrowUp":
+                 key.z.pressed = false
+            break
+        case "ArrowDown":
+                key.s.pressed = false    
+        break
            
             }
         })
