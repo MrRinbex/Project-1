@@ -12,7 +12,7 @@ function clearCanvas() {
 // player creation
 class Player {
     constructor(){
-        const ref = 0.17   // ref is like scale or width of the img to ajuste !
+        const ref = 0.27   // ref is like scale or width of the img to ajuste !
         const image = new Image()
         image.src = "./images/space-shuttle-player.png"
         // func to onload the frames of the image
@@ -25,13 +25,10 @@ class Player {
                 y: canvas.height - this.height - 10,
             };
         }
-
         this.speed = {
             x: 0,
             y: 0
-        }
-        
-        
+        }  
     }
     draw(){
         // clear the shadow of the spaceship it take me more then 4 hours to guess it !!
@@ -44,15 +41,46 @@ class Player {
             // the initial position + the speed = move
             this.position.x += this.speed.x
             this.position.y += this.speed.y
-            
-            
-
         }
-
     }
 }
 const player = new Player();
 // drowing the player and invok it
+
+
+// ufo creation
+class Ufo {
+    constructor(){
+        const ref = 0.4   
+        const image = new Image()
+        image.src = "./images/ufo.png"
+        image.onload = () =>{
+            this.image = image
+            this.width = image.width * ref
+            this.height = image.height * ref
+            this.position = {
+                x: canvas.width/2 - this.width/2,
+                y: canvas.height/2 - this.height -200
+            };
+        }
+        this.speed = {
+            x: 0,
+            y: 0
+        }  
+    }
+    draw(){
+        ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+        }
+    refresh(){
+        if(this.image){
+            this.draw()
+            this.position.x += this.speed.x
+            this.position.y += this.speed.y
+        }
+    }
+}
+const ufo = new Ufo();
+
 const key = {
     ArrowRight: {pressed: false},
     d: {pressed: false},
@@ -65,6 +93,7 @@ const key = {
 animation = () => {
     requestAnimationFrame(animation)
     player.refresh();
+    ufo.refresh();
     if((key.ArrowRight.pressed || key.d.pressed) && player.position.x + player.width <= canvas.width )
         player.speed.x = 9 
     else if((key.ArrowLeft.pressed || key.q.pressed ) && player.position.x >= 0)
