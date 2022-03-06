@@ -87,7 +87,8 @@ const key = {
     d: {pressed: false},
     ArrowLeft: {pressed: false},
     q: {pressed: false},
-    space: {pressed: false}
+    z: {pressed: false},
+    s: {pressed: false}
 }
 // creation right rocket 
 class Missile1{
@@ -100,8 +101,8 @@ class Missile1{
             this.width = image.width * ref
             this.height = image.height * ref
             this.position = {
-                x: canvas.width/2 - this.width + 120,
-                y: canvas.height - this.height - 130
+                x: player.position.x - this.width + 220,
+                y: player.position.y - this.height + 250
             };
         }
         this.speed = {
@@ -134,8 +135,8 @@ class Missile2{
             this.width = image.width * ref
             this.height = image.height * ref
             this.position = {
-                x: canvas.width/2 - this.width + 120,
-                y: canvas.height - this.height - 130
+                x: player.position.x,
+                y: player.position.y - this.height + 250
             };
         }
         this.speed = {
@@ -161,9 +162,28 @@ animation = () => {
     requestAnimationFrame(animation)
     player.refresh();
     ufo.refresh();
-    missile1.forEach((rocket)=> rocket.refresh())
-    missile2.forEach((rocket)=> rocket.refresh())
-    
+    if (key.z.pressed){
+        missile1.forEach((rocket)=> {
+            rocket.speed.y = -10
+            rocket.refresh()
+        })
+    } else{ 
+        missile1.forEach((rocket)=> {
+            rocket.refresh()
+        })
+    }
+
+    if (key.s.pressed){
+        missile2.forEach((rocket)=> {
+            rocket.speed.y = -3
+            rocket.refresh()
+        })
+    } else{ 
+        missile2.forEach((rocket)=> {
+            rocket.refresh()
+        })
+    }
+
     if((key.ArrowRight.pressed || key.d.pressed) && player.position.x + player.width <= canvas.width )
         player.speed.x = 9 
     else if((key.ArrowLeft.pressed || key.q.pressed ) && player.position.x >= 0)
@@ -192,9 +212,13 @@ switch(event.key){
     case "q":
              key.q.pressed = true    
         break
-    case " ":
-            console.log("space")
-            key.space.pressed = true    
+    case "z":
+        key.z.pressed = true    
+        missile1.push(new Missile1())
+        break
+    case "s":
+        key.s.pressed = true    
+        missile2.push(new Missile2())
         break
        
         }
@@ -215,9 +239,11 @@ switch(event.key){
         case "q":
                  key.q.pressed = false    
             break
-        case " ":
-                console.log("space")
-                key.space.pressed = false    
+        case "z":
+                key.z.pressed = false    
+            break
+        case "s":
+                key.s.pressed = false    
             break
            
             }
