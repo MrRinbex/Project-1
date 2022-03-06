@@ -96,7 +96,8 @@ main{
     background-repeat: no-repeat;
     background-size: 80%;
     animation: mamacyta 10s linear infinite;
-    padding-bottom: 10px;
+    margin-top: 10%;
+    overflow-wrap: break-word;
     font-style: italic;
 }
 .btn-score{
