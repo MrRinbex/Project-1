@@ -53,16 +53,6 @@ class Player {
 }
 const player = new Player();
 // drowing the player and invok it
-
-animation = () => {
-    requestAnimationFrame(animation)
-    player.refresh()    
-
-// remove drow method and it will be in refresh method => to every time refresh that draw
-}
-animation()
-
-// key event 
 const key = {
     ArrowRight: {pressed: false},
     d: {pressed: false},
@@ -70,23 +60,37 @@ const key = {
     q: {pressed: false},
     space: {pressed: false}
 }
-window.addEventListener('keydown', (event)=>{
+
+
+animation = () => {
+    requestAnimationFrame(animation)
+    player.refresh();
+    if((key.ArrowRight.pressed || key.d.pressed) && player.position.x + player.width <= canvas.width )
+        player.speed.x = 9 
+    else if((key.ArrowLeft.pressed || key.q.pressed ) && player.position.x >= 0)
+        player.speed.x = -9
+    else
+        player.speed.x = 0
+
+    
+    // remove drow method and it will be in refresh method => to every time refresh that draw
+}
+animation()
+
+// key event 
+addEventListener('keydown', (event)=>{
     console.log(event.key)
 switch(event.key){
     case "ArrowRight":
-        player.speed.x = 5
-        key.ArrowRight.pressed = true    
+            key.ArrowRight.pressed = true    
         break
     case "d":
-            player.speed.x = 5
             key.d.pressed = true    
         break
     case "ArrowLeft":
-            player.speed.x = -5
             key.ArrowLeft.pressed = true    
         break
     case "q":
-             player.speed.x = -5
              key.q.pressed = true    
         break
     case " ":
@@ -97,23 +101,19 @@ switch(event.key){
         }
     })
 
-    window.addEventListener('keydup', (event)=>{
+    addEventListener('keyup', (event)=>{
         console.log(event.key)
     switch(event.key){
         case "ArrowRight":
-            player.speed.x = 5
-            key.ArrowRight.pressed = false    
+                key.ArrowRight.pressed = false    
             break
         case "d":
-                player.speed.x = 5
                 key.d.pressed = false    
             break
         case "ArrowLeft":
-                player.speed.x = -5
                 key.ArrowLeft.pressed = false    
             break
         case "q":
-                 player.speed.x = -5
                  key.q.pressed = false    
             break
         case " ":
