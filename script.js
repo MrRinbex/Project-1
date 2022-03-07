@@ -24,8 +24,8 @@ class Player {
             this.position = {
                 x: canvas.width/2 - this.width/2,
                 y: canvas.height - this.height - 10,
-            };
         }
+        };
         this.speed = {
             x: 0,
             y: 0
@@ -51,17 +51,17 @@ const player = new Player();
 
 // ufo creation
 class Ufo {
-    constructor(){
-        const ref = 0.24   
+    constructor({position}){
+        this.ref = 0.24   
         const image = new Image()
         image.src = "./images/ufo.png"
         image.onload = () =>{
             this.image = image
-            this.width = image.width * ref
-            this.height = image.height * ref
+            this.width = image.width * this.ref
+            this.height = image.height * this.ref
             this.position = {
-                x: canvas.width/2 - this.width/2,
-                y: canvas.height/2 - this.height -200
+                x: position.x + 50,
+                y: position.y + 50
             };
         }
         this.speed = {
@@ -72,15 +72,17 @@ class Ufo {
     draw(){
         ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
         }
-    refresh(){
+    ifIsCollision(missilePosition){
+    
+    }
+    refresh({speed}){
         if(this.image){
             this.draw()
-            this.position.x += this.speed.x
-            this.position.y += this.speed.y
+            this.position.x += speed.x 
+            this.position.y += speed.y
         }
     }
 }
-const ufo = new Ufo();
 
 const key = {
     ArrowRight: {pressed: false},
@@ -92,27 +94,30 @@ const key = {
     ArrowUp: {pressed: false},
     ArrowDown: {pressed: false}
 }
+
 // creation right rocket 
 class Missile1{
     constructor(){
-        const visible = false
-        const ref = 0.1
+        this.visible = false
+        this.ref = 0.1
+        this.speed = {
+            x: 0,
+            y: 0
+        }
         const image = new Image()
         image.src = "./images/MissileRight.png"
         image.onload = () =>{
+            console.log(player)
             this.image = image
-            this.width = image.width * ref
-            this.height = image.height * ref
+            this.width = image.width * this.ref
+            this.height = image.height * this.ref
             this.position = {
                 x: player.position.x - this.width + 165,
                 y: player.position.y - this.height + 160
             };
-        }
-        this.speed = {
-            x: 0,
-            y: 0
-        }  
+        } 
     }
+    
     draw(){
         ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
     }
@@ -141,8 +146,8 @@ class Missile2{
             this.position = {
                 x: player.position.x - this.width + 50,
                 y: player.position.y - this.height + 160
-            };
-        }
+        };
+    }
         this.speed = {
             x: 0,
             y: 0
@@ -156,63 +161,71 @@ class Missile2{
             this.draw()
             this.position.x += this.speed.x
             this.position.y += this.speed.y
-            
+             
         }
     }
 }
 const missile2 = [new Missile2()]
 
-// here is the engine of the game =)
-animation = () => {
-    
-    requestAnimationFrame(animation)
-    clearCanvas()
-    player.refresh();
-    ufo.refresh();
-    missile1.forEach((rocket)=> {
-        rocket.refresh()
-    })
-    missile2.forEach((rocket)=> {
-        rocket.refresh()
-    })
-
-    // if (key.z.pressed || key.ArrowUp.pressed){
-    //     missile1.forEach((rocket)=> {
-    //         rocket.speed.y = -10
-    //         rocket.refresh()
-    //     })
-    // } else{ 
-    //     missile1.forEach((rocket)=> {
-    //         rocket.refresh()
-    //     })
-    // }
-    
-    // if (key.s.pressed || key.ArrowDown.pressed){
-    //     missile2.forEach((rocket)=> {
-    //         rocket.speed.y = -3
-    //         rocket.refresh()
-    //     })
-    // } else{ 
-    //     missile2.forEach((rocket)=> {
-    //         rocket.refresh()
-    //     })
-    // }
-    
-    if((key.ArrowRight.pressed || key.d.pressed) && player.position.x + player.width <= canvas.width )
-    player.speed.x = 9 
-    else if((key.ArrowLeft.pressed || key.q.pressed ) && player.position.x >= 0)
-    player.speed.x = -9
-    else
-    player.speed.x = 0
-    
-    
-    // remove drow method and it will be in refresh method => to every time refresh that draw
+class Wave {
+    constructor(){
+        this.ufos = []
+        const numberColumns = Math.floor(Math.random() * 3 + 4)
+        this.width = numberColumns * 220;
+        for(let i = 0; i < numberColumns;i++){
+            this.ufos.push(new Ufo({position:{x:i*220,y:0}}))
+        };
+        this.position = {x:0,y:0}
+        this.speed = {x:5,y:1}
+    }
+    refresh(){
+        this.position.x += this.speed.x
+        this.position.y += this.speed.y
+        if( this.position.x <= 0 || this.position.x + this.width >= canvas.width)
+        this.speed.x = -this.speed.x
+    }
 }
+const waves = [new Wave()]
+
+// here is the engine of the game =)
+
+animation = () => {
+    requestAnimationFrame(animation)
+    clearCanvas();
+    player.refresh();
+    waves.forEach((wave)=>{
+        // missile1.length && console.log('ICI', missile1[0].position.y)
+        wave.refresh()
+        if(wave.position.y === canvas.height){
+            waves.push(new Wave())
+        }
+        //
+        //     if(missile1.position.x === waves.ufos.position.y ){
+            //         waves.ufos.splice(i, 1)
+            // }
+            //
+            wave.ufos.forEach((ufo,i)=>{
+                ufo.refresh({speed:wave.speed})
+            })
+        })
+        missile1.forEach((rocket)=> {
+            rocket.refresh()
+        });
+        missile2.forEach((rocket, i)=> {
+            rocket.refresh()
+        });
+        
+        if((key.ArrowRight.pressed || key.d.pressed) && player.position.x + player.width <= canvas.width )
+        player.speed.x = 9 
+        else if((key.ArrowLeft.pressed || key.q.pressed ) && player.position.x >= 0)
+        player.speed.x = -9
+        else
+        player.speed.x = 0    
+    }  
 animation()
 
 // key event 
 addEventListener('keydown', (event)=>{
-    console.log(event.key)
 switch(event.key){
     case "ArrowRight":
             key.ArrowRight.pressed = true    
@@ -238,7 +251,6 @@ switch(event.key){
     case "s":
         key.s.pressed = true    
         missile2.push(new Missile2())
-        clearCanvas()
         missile2.forEach((rocket)=> {
             rocket.visible = true
             rocket.speed.y = -2
@@ -257,16 +269,15 @@ switch(event.key){
     case "ArrowDown":
         key.ArrowDown.pressed = true    
         missile2.push(new Missile2())
-        missile2.forEach((rocket)=> {
+        missile2.forEach((rocket, i)=> {
             rocket.visible = true
             rocket.speed.y = -2
-            rocket.refresh()
-        })
+            rocket.refresh()       
+            })
         break
-       
         }
     })
-
+    
     addEventListener('keyup', (event)=>{
         console.log(event.key)
     switch(event.key){
@@ -297,5 +308,7 @@ switch(event.key){
            
             }
         })
+
+// audio
 
 }
