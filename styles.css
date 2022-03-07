@@ -137,7 +137,7 @@ button{
     box-shadow: 0 0.5em 0.5em -0.4em #b91382;
     transform: translateY(-0.25em);
 }
-.btn-start{
+.btn-switch{
     font-size: 1.5rem;
     text-decoration: none;
     font-style: none;
@@ -145,6 +145,25 @@ button{
     position: relative;
     color: #b91382;
     background-color: blanchedalmond;
+}
+.sound{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.sound img {
+    width: 55px;
+    padding: 10px;
+}
+img.soundBtn{
+    background: url(./images/volumeBtn.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: inherit;
+    height: 30px;
+    padding-right: 30px;
+
 }
 #canvas{
     background: url(./images/background1.gif);
@@ -171,6 +190,8 @@ button{
       background-position-x: 500%;
     }
 }
+ /* i found and copie this keyframes from internet */
+
 @-webkit-keyframes blink {
   20%, 24%, 55% 
   {

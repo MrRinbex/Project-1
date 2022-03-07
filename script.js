@@ -13,14 +13,14 @@ function clearCanvas() {
 // player creation
 class Player {
     constructor(){
-        const ref = 0.17   // ref is like scale or width of the img to ajuste !
+        this.ref = 0.17   // ref is like scale or width of the img to ajuste !
         const image = new Image()
         image.src = "./images/space-shuttle-player.png"
         // func to onload the frames of the image
         image.onload = () =>{
             this.image = image
-            this.width = image.width * ref
-            this.height = image.height * ref
+            this.width = image.width * this.ref
+            this.height = image.height * this.ref
             this.position = {
                 x: canvas.width/2 - this.width/2,
                 y: canvas.height - this.height - 10,
@@ -60,8 +60,8 @@ class Ufo {
             this.width = image.width * this.ref
             this.height = image.height * this.ref
             this.position = {
-                x: position.x + 50,
-                y: position.y + 50
+                x: position.x + canvas.width/4 ,
+                y: position.y 
             };
         }
         this.speed = {
@@ -73,7 +73,23 @@ class Ufo {
         ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
         }
     ifIsCollision(missilePosition){
-    
+        return (missilePosition.x > this.position.x && missilePosition.x < this.position.x + this.width) && (missilePosition.y > this.position.y && missilePosition.y < this.position.y + this.height)
+    }
+    isPositionY(){
+        if(this.image)
+        return this.position.y
+    }
+    isHeight(){
+        if(this.image)
+        return this.height
+    }
+    isPositionX(){
+        if(this.image)
+        return this.position.x
+    }
+    isWidth(){
+        if(this.image)
+        return this.width
     }
     refresh({speed}){
         if(this.image){
@@ -107,7 +123,6 @@ class Missile1{
         const image = new Image()
         image.src = "./images/MissileRight.png"
         image.onload = () =>{
-            console.log(player)
             this.image = image
             this.width = image.width * this.ref
             this.height = image.height * this.ref
@@ -117,9 +132,24 @@ class Missile1{
             };
         } 
     }
-    
     draw(){
         ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+    }
+    isPositionY(){
+        if(this.image && this.visible === true)
+         return this.position.y
+    }
+    isHeight(){
+        if(this.image && this.visible === true)
+         return this.height
+    }
+    isPositionX(){
+        if(this.image && this.visible === true)
+         return this.position.x
+    }
+    isWidth(){
+        if(this.image && this.visible === true)
+         return this.width
     }
     refresh(){
         if(this.image && this.visible === true){
@@ -130,6 +160,7 @@ class Missile1{
     }
 }
 const missile1 = [new Missile1()]
+
 
 
 // creation left rocket 
@@ -156,6 +187,22 @@ class Missile2{
     draw(){
         ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
     }
+    isPositionY(){
+        if(this.image && this.visible === true)
+         return this.position.y
+    }
+    isHeight(){
+        if(this.image && this.visible === true)
+         return this.height
+    }
+    isPositionX(){
+        if(this.image && this.visible === true)
+         return this.position.x
+    }
+    isWidth(){
+        if(this.image && this.visible === true)
+         return this.width
+    }
     refresh(){
         if(this.image && this.visible === true){
             this.draw()
@@ -170,45 +217,66 @@ const missile2 = [new Missile2()]
 class Wave {
     constructor(){
         this.ufos = []
-        const numberColumns = Math.floor(Math.random() * 3 + 4)
-        this.width = numberColumns * 220;
+        const numberColumns = Math.floor(Math.random() * 6 + 3)
+        this.width = numberColumns * 200
         for(let i = 0; i < numberColumns;i++){
-            this.ufos.push(new Ufo({position:{x:i*220,y:0}}))
+            // this.ufos.push(new Ufo({position:{x:i*220,y:0}}))
+            setInterval(()=> {
+                this.ufos.push(new Ufo({position:{x:i*200,y:i*90}}))
+              }, 5000);
         };
-        this.position = {x:0,y:0}
-        this.speed = {x:5,y:1}
+        this.position = {x:0,y:5}
+        this.speed = {x:3,y:0}
     }
     refresh(){
         this.position.x += this.speed.x
         this.position.y += this.speed.y
-        if( this.position.x <= 0 || this.position.x + this.width >= canvas.width)
+        this.speed.y = 0
+        if( this.position.x + this.width >= canvas.width || this.position.x <= 0)
         this.speed.x = -this.speed.x
+        this.speed.y = 4
+
     }
 }
 const waves = [new Wave()]
 
 // here is the engine of the game =)
-
 animation = () => {
     requestAnimationFrame(animation)
     clearCanvas();
-    player.refresh();
+    player.refresh();  
+    
     waves.forEach((wave)=>{
-        // missile1.length && console.log('ICI', missile1[0].position.y)
         wave.refresh()
-        if(wave.position.y === canvas.height){
+        if(wave.position.y === canvas.height && wave.position.x === canvas.width ){
             waves.push(new Wave())
         }
-        //
-        //     if(missile1.position.x === waves.ufos.position.y ){
-            //         waves.ufos.splice(i, 1)
-            // }
-            //
             wave.ufos.forEach((ufo,i)=>{
                 ufo.refresh({speed:wave.speed})
+            missile1.forEach((rocket,j)=>{
+                // if(rocket.isPositionY() - rocket.isHeight() <= ufo.isPositionY() - ufo.isHeight())
+                if ((rocket.isPositionX() > ufo.isPositionX() && rocket.isPositionX() < ufo.isPositionX() + ufo.isWidth()) && (rocket.isPositionY() > ufo.isPositionY() && rocket.isPositionY() < ufo.isPositionY() + ufo.isHeight()))
+                setTimeout(()=>{
+                        missile1.splice(j,1)
+                        wave.ufos.splice(i,1)
+                }, 0) 
+            })
+            missile2.forEach((rocket,j)=>{
+                if ((rocket.isPositionX() > ufo.isPositionX() && rocket.isPositionX() < ufo.isPositionX() + ufo.isWidth()) && (rocket.isPositionY() > ufo.isPositionY() && rocket.isPositionY() < ufo.isPositionY() + ufo.isHeight()))
+                setTimeout(()=>{
+                        missile2.splice(j,1)
+                        wave.ufos.splice(i,1)
+                }, 0) 
             })
         })
-        missile1.forEach((rocket)=> {
+    })
+        if(missile1.length === 80){
+            missile1.splice(3)
+        }
+        if(missile2.length === 80){
+            missile2.splice(3)
+        }
+        missile1.forEach((rocket,i)=> {
             rocket.refresh()
         });
         missile2.forEach((rocket, i)=> {
@@ -220,12 +288,13 @@ animation = () => {
         else if((key.ArrowLeft.pressed || key.q.pressed ) && player.position.x >= 0)
         player.speed.x = -9
         else
-        player.speed.x = 0    
+        player.speed.x = 0
+          
     }  
 animation()
 
 // key event 
-addEventListener('keydown', (event)=>{
+window.addEventListener('keydown', (event)=>{
 switch(event.key){
     case "ArrowRight":
             key.ArrowRight.pressed = true    
@@ -247,6 +316,7 @@ switch(event.key){
             rocket.speed.y = -10
             rocket.refresh()
         })
+        console.log(missile1)
         break
     case "s":
         key.s.pressed = true    
@@ -257,8 +327,8 @@ switch(event.key){
             rocket.refresh()
         })
         break
-    case "ArrowUp":
-        key.ArrowUp.pressed = true    
+        case "ArrowUp":
+            key.ArrowUp.pressed = true    
         missile1.push(new Missile1())
         missile1.forEach((rocket)=> {
             rocket.visible = true
@@ -310,5 +380,25 @@ switch(event.key){
         })
 
 // audio
+
+	const audio = new Audio();
+	audio.src = "./sound & effect/mainMusic.wav";
+	audio.loop = true;
+    const soundPlay = () =>{
+        audio.play()
+    }
+    audio.addEventListener("canplaythrough", soundPlay)
+    const soundOnOff = document.querySelector('img.soundBtn')
+	function mute(){
+		if(audio.muted){
+		    audio.muted = false;
+		    soundOnOff.style.backgroundImage = "url('./images/volumeBtn.png')"; 
+	    } else {
+		    audio.muted = true;
+		    soundOnOff.style.backgroundImage = "url('./images/muteBtn.png')" ;
+	    }
+	}
+    soundOnOff.addEventListener("click", mute);
+
 
 }
