@@ -5,7 +5,6 @@ const ctx = canvas.getContext("2d")
 canvas.width = innerWidth
 canvas.height = innerHeight
 
-// clear the canvas (not repeat img after mouvement)
 function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
   }
@@ -13,31 +12,48 @@ function clearCanvas() {
 // player creation
 class Player {
     constructor(){
-        this.ref = 0.17   // ref is like scale or width of the img to ajuste !
+        this.ref = 0.20   
         const image = new Image()
         image.src = "./images/space-shuttle-player.png"
-        // func to onload the frames of the image
         image.onload = () =>{
             this.image = image
             this.width = image.width * this.ref
             this.height = image.height * this.ref
             this.position = {
                 x: canvas.width/2 - this.width/2,
-                y: canvas.height - this.height - 10,
+                y: canvas.height - this.height +5,
         }
         };
         this.speed = {
             x: 0,
             y: 0
         }  
+        this.health = 100
     }
     draw(){
         // clear the shadow of the spaceship it take me more then 4 hours to guess it !!
         clearCanvas()
         ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
         }
+
+        isPositionY(){
+            if(this.image)
+            return this.position.y
+        }
+        isHeight(){
+            if(this.image)
+            return this.height
+        }
+        isPositionX(){
+            if(this.image)
+            return this.position.x
+        }
+        isWidth(){
+            if(this.image)
+            return this.width
+        }
     refresh(){
-        if(this.image){
+        if(this.image && this.health > 0){
             this.draw()
             // the initial position + the speed = move
             this.position.x += this.speed.x
@@ -46,8 +62,6 @@ class Player {
     }
 }
 const player = new Player();
-// drowing the player and invok it
-
 
 // ufo creation
 class Ufo {
@@ -216,7 +230,7 @@ const missile2 = [new Missile2()]
 
 // creation laser ufo 
 class Laser{
-    constructor(){
+    constructor({position, speed}){
         const visible = false
         const ref = 0.1
         const image = new Image()
@@ -226,8 +240,8 @@ class Laser{
             this.width = image.width * ref
             this.height = image.height * ref
             this.position = {
-                x: player.position.x - this.width + 50,
-                y: player.position.y - this.height + 160
+                x: position.x - this.width + 50,
+                y: position.y - this.height + 160
         };
     }   
         this.width = 3
@@ -236,6 +250,11 @@ class Laser{
             x: 0,
             y: 0
         }  
+    }
+    laserFire(position, speed){
+    laser.push(new Laser({
+        position:{x:this.position.x + this.width/2, y:this.position.y + this.height},
+        speed:{x:0,y:5}}))
     }
     draw(){
         ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
@@ -265,7 +284,7 @@ class Laser{
         }
     }
 }
-const laser = [new Laser()]
+const laser = []
 
 
 // creation of group of ufos
@@ -274,16 +293,15 @@ const laser = [new Laser()]
 class Wave {
     constructor(){
         this.ufos = []
-        this.numberOfUfos = Math.floor(Math.random() * 4 + 3)
+        this.numberOfUfos = Math.floor(Math.random() * 2 + 3)
         this.width = this.numberOfUfos * 200
         for(let i = 0; i < this.numberOfUfos;i++){
-            // this.ufos.push(new Ufo({position:{x:i*220,y:0}}))
-            setInterval(()=> {
-                this.ufos.push(new Ufo({position:{x:i*200,y:i*90}}))
-              }, 5000);
+            setInterval(()=>{
+                this.ufos.push(new Ufo({position:{x:i*200,y:i*70}}))
+            },3000) 
         };
-        this.position = {x:0,y:-3} // carefull here !!
-        this.speed = {x:3,y:0}
+        this.position = {x:0,y:0} // carefull here !!
+        this.speed = {x:2,y:0}
     }
     refresh(){
         this.position.x += this.speed.x
@@ -291,11 +309,13 @@ class Wave {
         this.speed.y = 0
         if( this.position.x + this.width >= canvas.width || this.position.x <= 0)
         this.speed.x = -this.speed.x
-        this.speed.y = 4
-
+        this.speed.y = 3
     }
 }
 const waves = [new Wave()]
+
+let score = 0
+const scoreCounter = document.querySelector('.counter')
 
 // here is the engine of the game with frames ! =)
 animation = () => {
@@ -304,17 +324,25 @@ animation = () => {
     player.refresh();  
     waves.forEach((wave)=>{
         wave.refresh()
-        if(wave.position.y === canvas.height && wave.position.x === canvas.width ){
-            waves.push(new Wave())
-        }
+        
             wave.ufos.forEach((ufo,i)=>{
                 ufo.refresh({speed:wave.speed})
+                if ((ufo.isPositionX() > player.isPositionX() && ufo.isPositionX() < player.isPositionX() + player.isWidth()) && (ufo.isPositionY() > player.isPositionY() && ufo.isPositionY() < player.isPositionY() + player.isHeight()))
+               {
+                    player.health -=100 
+                    wave.ufos.splice(i,1)
+                    console.log("dead player")
+                }
+
             missile1.forEach((rocket,j)=>{
-                // if(rocket.isPositionY() - rocket.isHeight() <= ufo.isPositionY() - ufo.isHeight())
+                // if(player.isPositionX() > player.isHeight() <= ufo.isPositionY() - ufo.isHeight())
                 if ((rocket.isPositionX() > ufo.isPositionX() && rocket.isPositionX() < ufo.isPositionX() + ufo.isWidth()) && (rocket.isPositionY() > ufo.isPositionY() && rocket.isPositionY() < ufo.isPositionY() + ufo.isHeight()))
                 setTimeout(()=>{
                         missile1.splice(j,1)
                         wave.ufos.splice(i,1)
+                        score++
+                        scoreCounter.textContent = score
+
                 }, 0) 
             })
             missile2.forEach((rocket,j)=>{
@@ -322,9 +350,12 @@ animation = () => {
                 setTimeout(()=>{
                         missile2.splice(j,1)
                         wave.ufos.splice(i,1)
+                        score++
+                        scoreCounter.textContent = score
                 }, 0) 
             })
         })
+       
     })
         if(missile1.length === 80){
             missile1.splice(3)
@@ -332,7 +363,7 @@ animation = () => {
         if(missile2.length === 80){
             missile2.splice(3)
         }
-        missile1.forEach((rocket,i)=> {
+        missile1.forEach((rocket, i)=> {
             rocket.refresh()
         });
         missile2.forEach((rocket, i)=> {
@@ -348,7 +379,7 @@ animation = () => {
           
     }  
 animation()
-
+console.log(score)
 // key event 
 window.addEventListener('keydown', (event)=>{
 switch(event.key){
@@ -366,12 +397,12 @@ switch(event.key){
         break
     case "z":
             key.z.pressed = true    
-            missile1.push(new Missile1())
+            missile1.push(new Missile1())                
             missile1.forEach((rocket)=> {
-            rocket.visible = true
-            soundFire()
-            rocket.speed.y = -10
-            rocket.refresh()
+                rocket.visible = true
+                rocket.speed.y = -10
+                rocket.refresh()
+                soundFire()
         })
         console.log(missile1)
         break
@@ -438,6 +469,7 @@ switch(event.key){
            
             }
         })
+
 
 // generic audio
 

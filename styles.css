@@ -37,7 +37,7 @@ main{
     margin-left: 25vmin;
     margin-right: 25vmin;
     padding-top: 10vmin;
-    padding-bottom: 15vmin;
+    padding-bottom: 10vmin;
     height: 1000px;
 }
     /* need adjust height for 2 block presentation and game-platform */
@@ -146,6 +146,7 @@ button{
     color: #b91382;
     background-color: blanchedalmond;
     margin-right: 10px;
+    
 }
 .sound{
     display: flex;
@@ -164,7 +165,7 @@ img.soundBtn{
     width: inherit;
     height: 30px;
     padding-right: 30px;
-
+    cursor: pointer;
 }
 #canvas{
     background: url(./images/background1.gif);
@@ -191,7 +192,7 @@ img.soundBtn{
       background-position-x: 500%;
     }
 }
- /* i found and copie this keyframes from internet */
+ /* i found and copie this keyframes from internet and i change the colors*/
 
 @-webkit-keyframes blink {
   20%, 24%, 55% 
