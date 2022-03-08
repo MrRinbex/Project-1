@@ -214,18 +214,75 @@ class Missile2{
 }
 const missile2 = [new Missile2()]
 
+// creation laser ufo 
+class Laser{
+    constructor(){
+        const visible = false
+        const ref = 0.1
+        const image = new Image()
+        image.src = "./images/laser.png"
+        image.onload = () =>{
+            this.image = image
+            this.width = image.width * ref
+            this.height = image.height * ref
+            this.position = {
+                x: player.position.x - this.width + 50,
+                y: player.position.y - this.height + 160
+        };
+    }   
+        this.width = 3
+        this.height = 10
+        this.speed = {
+            x: 0,
+            y: 0
+        }  
+    }
+    draw(){
+        ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+    }
+    isPositionY(){
+        if(this.image && this.visible === true)
+         return this.position.y
+    }
+    isHeight(){
+        if(this.image && this.visible === true)
+         return this.height
+    }
+    isPositionX(){
+        if(this.image && this.visible === true)
+         return this.position.x
+    }
+    isWidth(){
+        if(this.image && this.visible === true)
+         return this.width
+    }
+    refresh(){
+        if(this.image && this.visible === true){
+            this.draw()
+            this.position.x += this.speed.x
+            this.position.y += this.speed.y
+             
+        }
+    }
+}
+const laser = [new Laser()]
+
+
+// creation of group of ufos
+
+
 class Wave {
     constructor(){
         this.ufos = []
-        const numberColumns = Math.floor(Math.random() * 6 + 3)
-        this.width = numberColumns * 200
-        for(let i = 0; i < numberColumns;i++){
+        this.numberOfUfos = Math.floor(Math.random() * 4 + 3)
+        this.width = this.numberOfUfos * 200
+        for(let i = 0; i < this.numberOfUfos;i++){
             // this.ufos.push(new Ufo({position:{x:i*220,y:0}}))
             setInterval(()=> {
                 this.ufos.push(new Ufo({position:{x:i*200,y:i*90}}))
               }, 5000);
         };
-        this.position = {x:0,y:5}
+        this.position = {x:0,y:-3} // carefull here !!
         this.speed = {x:3,y:0}
     }
     refresh(){
@@ -240,12 +297,11 @@ class Wave {
 }
 const waves = [new Wave()]
 
-// here is the engine of the game =)
+// here is the engine of the game with frames ! =)
 animation = () => {
     requestAnimationFrame(animation)
     clearCanvas();
     player.refresh();  
-    
     waves.forEach((wave)=>{
         wave.refresh()
         if(wave.position.y === canvas.height && wave.position.x === canvas.width ){
@@ -309,38 +365,42 @@ switch(event.key){
              key.q.pressed = true    
         break
     case "z":
-        key.z.pressed = true    
-        missile1.push(new Missile1())
-        missile1.forEach((rocket)=> {
+            key.z.pressed = true    
+            missile1.push(new Missile1())
+            missile1.forEach((rocket)=> {
             rocket.visible = true
+            soundFire()
             rocket.speed.y = -10
             rocket.refresh()
         })
         console.log(missile1)
         break
     case "s":
-        key.s.pressed = true    
-        missile2.push(new Missile2())
-        missile2.forEach((rocket)=> {
+            key.s.pressed = true    
+            missile2.push(new Missile2())
+            missile2.forEach((rocket)=> {
             rocket.visible = true
+            soundFireRed()
             rocket.speed.y = -2
             rocket.refresh()
         })
         break
         case "ArrowUp":
             key.ArrowUp.pressed = true    
-        missile1.push(new Missile1())
-        missile1.forEach((rocket)=> {
+            missile1.push(new Missile1())
+            missile1.forEach((rocket)=> {
             rocket.visible = true
+            soundFire()
             rocket.speed.y = -10
             rocket.refresh()
         })
         break
     case "ArrowDown":
-        key.ArrowDown.pressed = true    
-        missile2.push(new Missile2())
-        missile2.forEach((rocket, i)=> {
+            key.ArrowDown.pressed = true    
+            missile2.push(new Missile2())
+            missile2.forEach((rocket, i)=> {
             rocket.visible = true
+            soundFireRed()
             rocket.speed.y = -2
             rocket.refresh()       
             })
@@ -379,7 +439,7 @@ switch(event.key){
             }
         })
 
-// audio
+// generic audio
 
 	const audio = new Audio();
 	audio.src = "./sound & effect/mainMusic.wav";
@@ -399,6 +459,20 @@ switch(event.key){
 	    }
 	}
     soundOnOff.addEventListener("click", mute);
+
+// fire main player
+
+const audioPlayerFire = new Audio();
+audioPlayerFire.src = "./sound & effect/ufoFireSound.wav";
+const soundFire = () => {
+    audioPlayerFire.play()
+}
+const audioPlayerFireRed = new Audio();
+audioPlayerFireRed.src = "./sound & effect/playerFireSound.wav";
+const soundFireRed = () => {
+    audioPlayerFireRed.play()
+}
+
 
 
 }

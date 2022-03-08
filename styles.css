@@ -125,8 +125,8 @@ button{
     min-height: 50px;
     min-width: 130px;
     background-color: blanchedalmond;
-    border: 1px solid blanchedalmond;
-    border-radius: 10px 10px 10px 10px;
+    border: 10px solid blanchedalmond;
+    border-radius: 30px 10px 30px 10px;
     font-size: 100%;
     overflow: visible;
     box-shadow: 0 0.5em 0.5em -0.4em #b91382;
@@ -145,6 +145,7 @@ button{
     position: relative;
     color: #b91382;
     background-color: blanchedalmond;
+    margin-right: 10px;
 }
 .sound{
     display: flex;
