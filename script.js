@@ -312,24 +312,24 @@ const restartBtn = document.querySelector('button.btn-restart-game')
 
 let game = {active: false, over: false}
 
-restartBtn.addEventListener('click', () =>{
-    clearCanvas()
-    cancelAnimationFrame(restartAnimation);
-    game.active = true
-    score = 0
-    restartLog()
-    animation()
-     // need to work here //
-    if(!player.image){
-        player.refresh()
-    }
-    if(waves.length >= 1){
-        waves.refresh()
-    }
-    setInterval(()=>{
+// restartBtn.addEventListener('click', () =>{
+//     clearCanvas()
+//     cancelAnimationFrame(restartAnimation);
+//     game.active = true
+//     score = 0
+//     restartLog()
+//     animation()
+//      // need to work here //
+//     if(!player.image){
+//         player.refresh()
+//     }
+//     if(waves.length >= 1){
+//         waves.refresh()
+//     }
+//     setInterval(()=>{
 
-    })
-})
+//     })
+// })
 
 startBtn.addEventListener('click', () => {
     game.active = true
@@ -514,7 +514,7 @@ switch(event.key){
         }
     })
     
-    addEventListener('keyup', (event)=>{
+    window.addEventListener('keyup', (event)=>{
     switch(event.key){
         case "ArrowRight":
                 key.ArrowRight.pressed = false    
