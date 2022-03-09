@@ -164,7 +164,7 @@ class Missile1{
          return this.width
     }
     refresh(){
-        if(this.image && this.visible === true){
+        if(this.image && this.visible === true && game.active === true){
             this.draw()
             this.position.x += this.speed.x
             this.position.y += this.speed.y
@@ -216,7 +216,7 @@ class Missile2{
          return this.width
     }
     refresh(){
-        if(this.image && this.visible === true){
+        if(this.image && this.visible === true && game.active === true){
             this.draw()
             this.position.x += this.speed.x
             this.position.y += this.speed.y
@@ -233,6 +233,7 @@ const missile2 = [new Missile2()]
 
 class Wave {
     constructor(){
+        this.health = 100
         this.ufos = []
         this.lasers = []
         this.numberOfUfos = Math.floor(Math.random() * 5 + 3)
@@ -247,6 +248,7 @@ class Wave {
         this.speed = {x:2,y:0}
     }
     refresh(){
+        if(this.health === 100)
         this.position.x += this.speed.x
         this.position.y += this.speed.y
         this.speed.y = 0
@@ -267,6 +269,8 @@ class Explosion{
         this.radius = radius
         this.speed = speed
         this.color = color
+        this.width = this.width 
+        this.height = this.height 
         
     }
     draw(){
@@ -291,8 +295,7 @@ class Explosion{
     refresh(){
         this.draw()
         this.position.x += this.speed.x
-        this.position.y += this.speed.y
-        
+        this.position.y += this.speed.y   
     }
 }
 
@@ -304,19 +307,39 @@ const scoreCounter = document.querySelector('.counter')
 const information = document.querySelector('#information')
 const startBtn = document.querySelector('button.btn-start-game')
 const texture = document.querySelector('.speech p')
-
+const restartBtn = document.querySelector('button.btn-restart-game')
 
 
 let game = {active: false, over: false}
-startBtn.addEventListener('click', () => {
+
+restartBtn.addEventListener('click', () =>{
+    clearCanvas()
+    cancelAnimationFrame(restartAnimation);
     game.active = true
-    texture.textContent = "Go Go Go"
-    
+    score = 0
+    restartLog()
+    animation()
+     // need to work here //
+    if(!player.image){
+        player.refresh()
+    }
+    if(waves.length >= 1){
+        waves.refresh()
+    }
+    setInterval(()=>{
+
+    })
 })
 
+startBtn.addEventListener('click', () => {
+    game.active = true
+    texture.textContent = `Reach 30 points to win `    
+})
+let restartAnimation = null
+
 // here is the engine of the game with frames ! =)
-animation = () => {
-    requestAnimationFrame(animation)
+const animation = () => {
+    restartAnimation = requestAnimationFrame(animation)
     if(!game.active)return
     clearCanvas();
     player.refresh();  
@@ -333,15 +356,16 @@ animation = () => {
                         explosions.push(new Explosion({
                             position:{x: ufo.isPositionX() + ufo.isWidth()/2, y: ufo.isPositionY() + ufo.isHeight()/2},
                             speed:{x:(Math.random()-0.5) * 2, y:(Math.random()- 0.5 * 2)},
-                            color: "red",
+                            color: " #ffffff ",
                             radius: Math.random() * 3
                         }))
                     }
-                    player.health -=100 
+                    player.health -=100
+                    wave.health = 0 
                     wave.ufos.splice(i,1)
                     setTimeout(()=>{
                         game.active = false
-                    },500)
+                    },1000)
                     setTimeout(()=>{
                         loserLog()
                        },1500)
@@ -349,11 +373,11 @@ animation = () => {
                 missile1.forEach((rocket,j)=>{
                     if ((rocket.isPositionX() > ufo.isPositionX() && rocket.isPositionX() < ufo.isPositionX() + ufo.isWidth()) && (rocket.isPositionY() > ufo.isPositionY() && rocket.isPositionY() < ufo.isPositionY() + ufo.isHeight())){
                         // ufo explosion
-                        for(let i = 0 ; i < 20; i++){
+                        for(let i = 0 ; i < 40; i++){
                             explosions.push(new Explosion({
                                 position:{x: ufo.isPositionX() + ufo.isWidth()/2, y: ufo.isPositionY() + ufo.isHeight()/2},
                                 speed:{x:(Math.random()-0.5) * 2, y:(Math.random()- 0.5 * 2)},
-                                color: "red",
+                                color:  " #09b648  ",
                                 radius: Math.random() * 3
                             }))
                         }
@@ -366,17 +390,28 @@ animation = () => {
                         }, 0) 
                     }
                 })
+
                 missile2.forEach((rocket,j)=>{
-                    if ((rocket.isPositionX() > ufo.isPositionX() && rocket.isPositionX() < ufo.isPositionX() + ufo.isWidth()) && (rocket.isPositionY() > ufo.isPositionY() && rocket.isPositionY() < ufo.isPositionY() + ufo.isHeight()))
-                    setTimeout(()=>{
-                        missile2.splice(j,1)
-                        wave.ufos.splice(i,1)
-                        score++
-                        scoreCounter.textContent = score
-                    }, 0) 
+                    if ((rocket.isPositionX() > ufo.isPositionX() && rocket.isPositionX() < ufo.isPositionX() + ufo.isWidth()) && (rocket.isPositionY() > ufo.isPositionY() && rocket.isPositionY() < ufo.isPositionY() + ufo.isHeight())){
+                        // ufo explosion
+                        for(let i = 0 ; i < 20; i++){
+                            explosions.push(new Explosion({
+                                position:{x: ufo.isPositionX() + ufo.isWidth()/2, y: ufo.isPositionY() + ufo.isHeight()/2},
+                                speed:{x:(Math.random()-0.5) * 2, y:(Math.random()- 0.5 * 2)},
+                                color: "yellow",
+                                radius: Math.random() * 3
+                            }))
+                        }
+                        setTimeout(()=>{
+                            missile2.splice(j,1)
+                            wave.ufos.splice(i,1)
+                            explosions.splice(j,1)
+                            score++
+                            scoreCounter.textContent = score
+                        }, 0) 
+                    }
                 })
-            })
-            
+            }) 
         })
         if(missile1.length === 80){
             missile1.splice(3)
@@ -550,6 +585,9 @@ const winnerLog = () =>{
 }
 const loserLog = () =>{
     information.textContent = 'No chance !'
+}
+const restartLog = () =>{
+    information.textContent = ''
 }
 
 }

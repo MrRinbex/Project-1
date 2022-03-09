@@ -137,6 +137,7 @@ main{
 .score p{
     padding-right: 10px;
     font-size: 1.8rem;
+    text-align: center;
 }
 .score p::first-letter{
     color: #b91382;
@@ -157,14 +158,29 @@ button{
 .btn-switch::first-letter{
     color: #111; 
 }
- /* need to work on the btn */
 
-div.btn-start:hover {
+.btn-start-game:hover {
     transform: translateY(-0.05em);
     margin-bottom: 5px;
 }
+
+.btn-restart-game:hover{
+    transform: translateY(-0.05em);
+    margin-bottom: 5px;
+}
+.btn-restart-game{
+color: #b91382;
+width: 100px;
+cursor: pointer;
+}
+.btn-restart-game::first-letter{
+    color: #111;
+}
+.btn-restart-game span{
+        color: #111
+}
 .btn-switch{
-    font-size: 1.5rem;
+    width: 100%;
     text-decoration: none;
     padding: 3px;
     position: relative;
@@ -178,6 +194,7 @@ div.btn-start:hover {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    height: 50px;
 }
 .sound img {
     width: 55px;
