@@ -5,6 +5,10 @@ const ctx = canvas.getContext("2d")
 canvas.width = 1024
 canvas.height = 576
 
+
+let score = 0
+let game = {active: false, level: "easyMode"}
+
 function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
   }
@@ -61,7 +65,7 @@ class Player {
         }
     }
 }
-const player = new Player();
+let player = new Player();
 
 // ufo creation
 class Ufo {
@@ -235,31 +239,49 @@ class Wave {
     constructor(){
         this.health = 100
         this.ufos = []
-        this.lasers = []
-        this.numberOfUfos = Math.floor(Math.random() * 5 + 3)
+        this.numberOfUfos = Math.floor(Math.random() * 2 + 5)
         this.width = this.numberOfUfos * 20
         for(let i = 0; i < this.numberOfUfos;i++){
-            setInterval(()=>{
-                const ufo = new Ufo({position:{x:i*100,y:0}});
-                this.ufos.push(ufo)
-            },6000) 
+            if(game.level === "easyMode"){
+                setInterval(()=>{
+                    const ufo = new Ufo({position:{x:i*100,y:0}});
+                    this.ufos.push(ufo)
+                },6000) 
+            } else {
+                setInterval(()=>{
+                    const ufo = new Ufo({position:{x:i*100,y:0}});
+                    this.ufos.push(ufo)
+                },3000) 
+            }
         };
         this.position = {x:0,y:0} // carefull here !!
-        this.speed = {x:2,y:0}
+        this.speed = {x:3,y:0}
     }
     refresh(){
         if(this.health === 100)
         this.position.x += this.speed.x
         this.position.y += this.speed.y
         this.speed.y = 0
-        if( this.position.x + this.width >= canvas.width || this.position.x <= 0)
+        if( this.position.x + this.width >= canvas.width || this.position.x <= 0){
         this.speed.x = -this.speed.x
         this.speed.y = 2
     }
+        if(game.level === "hardMode"){
+            this.speed.y = 7
+        }else
+        this.speed.y = 2
+    }
+    fullHealth(){
+        this.health = 100
+    }
+    zeroHealth(){
+        this.health = 0
+    }
+
 }
 
 
-const waves = [new Wave()]
+let waves = [new Wave()]
 
 // create class explosion
 
@@ -299,29 +321,69 @@ class Explosion{
     }
 }
 
-const explosions = []
+let explosions = []
 
 
-let score = 0
+let id = null
+
 const scoreCounter = document.querySelector('.counter')
 const information = document.querySelector('#information')
 const startBtn = document.querySelector('button.btn-start-game')
 const texture = document.querySelector('.speech p')
 const restartBtn = document.querySelector('button.btn-restart-game')
+const levelBtnText = document.querySelector('.level p')
+const imgLevelBtn = document.querySelector('img.lvlBtn') 
+const btnLvl = document.querySelector('button.level')
+function easy (){
+    game.level = "easyMode"
+    levelBtnText.textContent = "No cry"
+    imgLevelBtn.style.backgroundImage = "url('./images/easyLvl.png')"
+    texture.textContent = `Reach 15 points to win, good luck... ` 
+    clickEffect()   
+}
+function hard (){
+    game.level = "hardMode"
+    levelBtnText.textContent = "Speedy"
+    imgLevelBtn.style.backgroundImage = "url('./images/hardLvl.png')"
+    texture.textContent = `Reach 50 points to win, good luck... `
+    clickEffect()    
+}
 
 
-let game = {active: false, over: false}
-let id = null
+btnLvl.addEventListener("click", ()=>{
+    if(game.level === "easyMode"){
+        hard()
+    }else
+        easy()
+})
+
+
+
+
 
 
 startBtn.addEventListener('click', () => {
+    clickEffect()
+    soundPause()
+    readyLog()
+    soundReadyGo()
+    setTimeout(()=>{
+        restartLog()
+    },1000)
+    setTimeout(()=>{
+        empltyLog()
+    },2000)
     game.active = true
-    texture.textContent = `Reach 30 points to win `    
+    if(game.level === "easyMode"){
+        texture.textContent = `Reach 15 points to win, good luck... `    
+    }else if(game.level === "hardMode"){
+        texture.textContent = `Reach 50 points to win, good luck... `    
+    }
 })
 
 // here is the engine of the game with frames ! =)
 const animation = () => {
-    requestAnimationFrame(animation)
+    id = requestAnimationFrame(animation)
     if(!game.active)return
     clearCanvas();
     player.refresh();  
@@ -337,21 +399,22 @@ const animation = () => {
                 for(let i = 0 ; i < 20; i++){
                     explosions.push(new Explosion({
                         position:{x: ufo.isPositionX() + ufo.isWidth()/2, y: ufo.isPositionY() + ufo.isHeight()/2},
-                        speed:{x:(Math.random()-0.5) * 2, y:(Math.random()- 0.5 * 2)},
+                        speed:{x:(Math.random()-0.5) * 2, y:(Math.random()- 1.2 ) * 2},
                         color: " #ffffff ",
-                        radius: Math.random() * 3
+                        radius: Math.random() * 8
                     }))
                 }
+                soundExplosionPlayer()
                 player.health -=100
                 wave.health = 0 
                 wave.ufos.splice(i,1)
                 setTimeout(()=>{
                     game.active = false
-                    game.over = true
-                },1000)
+                },4500)
                 setTimeout(()=>{
                     loserLog()
-                },1500)
+                    soundEndGame()
+                },3000)
             } 
             missile1.forEach((rocket,j)=>{
                 if ((rocket.isPositionX() > ufo.isPositionX() && rocket.isPositionX() < ufo.isPositionX() + ufo.isWidth()) && (rocket.isPositionY() > ufo.isPositionY() && rocket.isPositionY() < ufo.isPositionY() + ufo.isHeight())){
@@ -367,6 +430,7 @@ const animation = () => {
                     setTimeout(()=>{
                         missile1.splice(j,1)
                         wave.ufos.splice(i,1)
+                        soundExplosionUfo()
                         explosions.splice(j,1)
                         score++
                         scoreCounter.textContent = score
@@ -388,6 +452,7 @@ const animation = () => {
                     setTimeout(()=>{
                         missile2.splice(j,1)
                         wave.ufos.splice(i,1)
+                        soundExplosionUfo()
                         explosions.splice(j,1)
                         score++
                         scoreCounter.textContent = score
@@ -403,7 +468,7 @@ const animation = () => {
         missile2.splice(3)
     }
     if(explosions.length > 100){
-        explosions.splice(1)
+        explosions.splice(20,60)
     }
     missile1.forEach((rocket)=> {
         rocket.refresh()
@@ -418,11 +483,12 @@ const animation = () => {
     else
     player.speed.x = 0
     
-    if(score >= 30){
+    if((score >= 15 && game.level === "easyMode") || (score >= 50 && game.level === "hardMode")){
         setTimeout(()=>{
             game.active = false
         },500)
         setTimeout(()=>{
+            soundWinGame()
             winnerLog()
         },1500)
     }
@@ -430,23 +496,33 @@ const animation = () => {
 
 
 animation()
-function startAnimation(){
-    id = requestAnimationFrame(animation)
-}
-function cancelAnimation(){
-    cancelAnimationFrame(id)
-}
+
+
+
 restartBtn.addEventListener('click', () =>{
-            cancelAnimation(animation)
-            clearCanvas()
-            restartLog()
+            clickEffect()
+            soundPause()
+            cancelAnimationFrame(id)
+            clearCanvas()            
             score = 0
             scoreCounter.textContent = score
-            game.active = true
-            // game.over = true
+            readyLog()
+            soundReadyGo()
+            setTimeout(() => {
+                restartLog()
+            },1500)
+            setTimeout(() => {
+                game.active = true
+                empltyLog()
+            },3000)
+            animation()
             missile1.visible = true
             missile2.visible = true
-            player.health = 100        
+            explosions=[]
+            waves = []
+            waves.push(new Wave())
+            player.health = 100
+            player = new Player();
     })
 
 // key event 
@@ -466,51 +542,54 @@ switch(event.key){
              key.q.pressed = true    
         break
     case "z":
-        if(player.health > 0){
+        if(player.health > 0 && game.active === true){
             key.z.pressed = true    
             missile1.push(new Missile1())                
             missile1.forEach((rocket)=> {
             rocket.visible = true
             rocket.speed.y = -10
             rocket.refresh()
+            if(game.active)
             soundFire()
     })
         }
         break
     case "s":
-            if(player.health > 0){
+            if(player.health > 0 && game.active === true){
                 key.s.pressed = true    
                 missile2.push(new Missile2())
                 missile2.forEach((rocket)=> {
                 rocket.visible = true
-                soundFireRed()
                 rocket.speed.y = -2
                 rocket.refresh()
+                if(game.active)
+                soundFireRed()
             })
             }
           
         break
         case "ArrowUp":
-            if(player.health > 0){
+            if(player.health > 0 && game.active === true){
                 key.ArrowUp.pressed = true    
                 missile1.push(new Missile1())
                 missile1.forEach((rocket)=> {
                 rocket.visible = true
-                soundFire()
                 rocket.speed.y = -10
                 rocket.refresh()
+                if(game.active)
+                soundFire()
             })
             }
         break
         case "ArrowDown":
-            if(player.health > 0){
+            if(player.health > 0 && game.active === true){
                 key.ArrowDown.pressed = true    
                 missile2.push(new Missile2())
                 missile2.forEach((rocket, i)=> {
                 rocket.visible = true
-                soundFireRed()
                 rocket.speed.y = -2
-                rocket.refresh()       
+                rocket.refresh()     
+                soundFireRed()
             })
             }
         break
@@ -556,6 +635,10 @@ switch(event.key){
     const soundPlay = () =>{
         audio.play()
     }
+    const soundPause = () =>{
+        audio.pause()
+    }
+    
     audio.addEventListener("canplaythrough", soundPlay)
     const soundOnOff = document.querySelector('img.soundBtn')
 	function mute(){
@@ -581,16 +664,53 @@ audioPlayerFireRed.src = "./sound & effect/playerFireSound.wav";
 const soundFireRed = () => {
     audioPlayerFireRed.play()
 }
+const audioPlayerExplosion = new Audio();
+audioPlayerExplosion.src = "./sound & effect/explosionSoundPlayer.wav";
+const soundExplosionPlayer = () => {
+    audioPlayerExplosion.play()
+}
+const audioUfoExplosion = new Audio();
+audioUfoExplosion.src = "./sound & effect/explosionUfo.wav";
+const soundExplosionUfo = () => {
+    audioUfoExplosion.play()
+}
+const soundGameOver = new Audio();
+soundGameOver.src = "./sound & effect/gameOverSound.wav";
+const soundEndGame = () => {
+    soundGameOver.play()
+}
+
+const soundGameWin = new Audio();
+soundGameWin.src = "./sound & effect/winner.mp3";
+const soundWinGame = () => {
+    soundGameWin.play()
+}
+const btnEffect = new Audio();
+btnEffect.src = "./sound & effect/hitButtonEffect.wav";
+const clickEffect = () => {
+    btnEffect.play()
+}
+const audioReadyGo = new Audio();
+audioReadyGo.src = "./sound & effect/readyGo.mp3";
+const soundReadyGo = () => {
+    audioReadyGo.play()
+}
 
 // loger winner
 const winnerLog = () =>{
-    information.textContent = 'Well done'
+    information.textContent = 'Well done !'
 }
 const loserLog = () =>{
     information.textContent = 'No chance !'
 }
 const restartLog = () =>{
+    information.textContent = 'Go'
+}
+const empltyLog = () =>{
     information.textContent = ''
+}
+const readyLog = () =>{
+    information.textContent = 'Ready!'
 }
 
 }

@@ -39,6 +39,7 @@ main{
     padding-top: 3vmin;
     padding-bottom: 3vmin;
     min-height: 650px;
+    max-height: 2000px;
 }
     /* need adjust height for 2 block presentation and game-platform */
 #presentation{
@@ -129,6 +130,9 @@ main{
     color: #b91382;
 }
 .score{
+    position: absolute;
+    margin-left: 20px;
+    margin-top: 20px;
     color: blanchedalmond;
     font-size: 1.8rem;  
     display: flex;
@@ -230,6 +234,36 @@ img.soundBtn{
     text-align: center;
     animation: blink 9s infinite;
     -webkit-animation: blink 12s infinite;
+}
+.level{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border: 10px solid blanchedalmond;
+    width: 170px;
+    
+
+}
+button.level{
+    background-color: blanchedalmond;
+    color: #b91382;
+    padding: revert;
+    height: 44px;
+}
+button.level p::first-letter{
+    color: #111;
+}
+
+
+img.lvlBtn{
+   background-image: url(./images/easyLvl.png);
+   background-size: contain;
+   background-repeat: no-repeat;
+   height: 30px;
+   padding-right: 39px;
+   cursor: pointer;
 }
 @keyframes scroll {
     100%{
