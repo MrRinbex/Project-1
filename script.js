@@ -442,8 +442,8 @@ restartBtn.addEventListener('click', () =>{
             restartLog()
             score = 0
             scoreCounter.textContent = score
-            game.active = false
-            game.over = true
+            game.active = true
+            // game.over = true
             missile1.visible = true
             missile2.visible = true
             player.health = 100        
