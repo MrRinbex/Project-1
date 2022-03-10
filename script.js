@@ -6,7 +6,8 @@ window.onload = () => {
 
   let score = 0;
   let game = { active: false, level: "easyMode" };
-  
+  let id = null;
+
   const key = {
     ArrowRight: { pressed: false },
     d: { pressed: false },
@@ -321,8 +322,6 @@ window.onload = () => {
 
   let explosions = [];
 
-  let id = null;
-
   const scoreCounter = document.querySelector(".counter");
   const information = document.querySelector("#information");
   const startBtn = document.querySelector("button.btn-start-game");
@@ -345,97 +344,23 @@ window.onload = () => {
     texture.textContent = `Reach 50 points to win, good luck... `;
     clickEffect();
   }
-  // here is the engine of the game with frames ! =)
-  const animation = () => {
-    id = requestAnimationFrame(animation);
-    if (!game.active) return;
-    clearCanvas();
-    player.refresh();
-    explosions.forEach((explosion) => {
-      explosion.refresh();
-    });
-    waves.forEach((wave) => {
-      wave.refresh();
-      wave.ufos.forEach((ufo, i) => {
-        ufo.refresh({ speed: wave.speed });
-        if (
-          ufo.isPositionX() > player.isPositionX() &&
-          ufo.isPositionX() < player.isPositionX() + player.isWidth() &&
-          ufo.isPositionY() > player.isPositionY() &&
-          ufo.isPositionY() < player.isPositionY() + player.isHeight()
-        ) {
-          // player explosion
-          for (let i = 0; i < 20; i++) {
-            explosions.push(
-              new Explosion({
-                position: {
-                  x: ufo.isPositionX() + ufo.isWidth() / 2,
-                  y: ufo.isPositionY() + ufo.isHeight() / 2,
-                },
-                speed: {
-                  x: (Math.random() - 0.5) * 2,
-                  y: (Math.random() - 1.2) * 2,
-                },
-                color: " #ffffff ",
-                radius: Math.random() * 8,
-              })
-            );
-          }
-          soundExplosionPlayer();
-          player.health -= 100;
-          wave.health = 0;
-          wave.ufos.splice(i, 1);
-          setTimeout(() => {
-            game.active = false;
-          }, 2500);
-          setTimeout(() => {
-            loserLog();
-            soundEndGame();
-          }, 3000);
-        }
-        missile1.forEach((rocket, j) => {
-          if (
-            rocket.isPositionX() > ufo.isPositionX() &&
-            rocket.isPositionX() < ufo.isPositionX() + ufo.isWidth() &&
-            rocket.isPositionY() > ufo.isPositionY() &&
-            rocket.isPositionY() < ufo.isPositionY() + ufo.isHeight()
-          ) {
-            // ufo explosion
-            for (let i = 0; i < 40; i++) {
-              explosions.push(
-                new Explosion({
-                  position: {
-                    x: ufo.isPositionX() + ufo.isWidth() / 2,
-                    y: ufo.isPositionY() + ufo.isHeight() / 2,
-                  },
-                  speed: {
-                    x: (Math.random() - 0.5) * 2,
-                    y: Math.random() - 0.5 * 2,
-                  },
-                  color: " #09b648  ",
-                  radius: Math.random() * 3,
-                })
-              );
-            }
-            setTimeout(() => {
-              missile1.splice(j, 1);
-              wave.ufos.splice(i, 1);
-              soundExplosionUfo();
-              explosions.splice(j, 1);
-              score++;
-              scoreCounter.textContent = score;
-            }, 0);
-          }
-        });
 
-        missile2.forEach((rocket, j) => {
+
+
+
+function colissionExplision(){
+    explosions.forEach((explosion) => explosion.refresh());
+    waves.forEach((wave) => {
+        wave.refresh();
+        wave.ufos.forEach((ufo, i) => {
+          ufo.refresh({ speed: wave.speed });
           if (
-            rocket.isPositionX() > ufo.isPositionX() &&
-            rocket.isPositionX() < ufo.isPositionX() + ufo.isWidth() &&
-            rocket.isPositionY() > ufo.isPositionY() &&
-            rocket.isPositionY() < ufo.isPositionY() + ufo.isHeight()
+            ufo.isPositionX() > player.isPositionX() &&
+            ufo.isPositionX() < player.isPositionX() + player.isWidth() &&
+            ufo.isPositionY() > player.isPositionY() &&
+            ufo.isPositionY() < player.isPositionY() + player.isHeight()
           ) {
-            // ufo explosion
+            // player explosion
             for (let i = 0; i < 20; i++) {
               explosions.push(
                 new Explosion({
@@ -445,61 +370,151 @@ window.onload = () => {
                   },
                   speed: {
                     x: (Math.random() - 0.5) * 2,
-                    y: Math.random() - 0.5 * 2,
+                    y: (Math.random() - 1.2) * 2,
                   },
-                  color: "yellow",
-                  radius: Math.random() * 3,
+                  color: " #ffffff ",
+                  radius: Math.random() * 8,
                 })
               );
             }
+            soundExplosionPlayer();
+            player.health -= 100;
+            wave.health = 0;
+            wave.ufos.splice(i, 1);
             setTimeout(() => {
-              missile2.splice(j, 1);
-              wave.ufos.splice(i, 1);
-              soundExplosionUfo();
-              explosions.splice(j, 1);
-              score++;
-              scoreCounter.textContent = score;
-            }, 0);
+              game.active = false;
+            }, 2500);
+            setTimeout(() => {
+              loserLog();
+              soundEndGame();
+            }, 3000);
           }
+          missile1.forEach((rocket, j) => {
+            if (
+              rocket.isPositionX() > ufo.isPositionX() &&
+              rocket.isPositionX() < ufo.isPositionX() + ufo.isWidth() &&
+              rocket.isPositionY() > ufo.isPositionY() &&
+              rocket.isPositionY() < ufo.isPositionY() + ufo.isHeight()
+            ) {
+              // ufo explosion
+              for (let i = 0; i < 40; i++) {
+                explosions.push(
+                  new Explosion({
+                    position: {
+                      x: ufo.isPositionX() + ufo.isWidth() / 2,
+                      y: ufo.isPositionY() + ufo.isHeight() / 2,
+                    },
+                    speed: {
+                      x: (Math.random() - 0.5) * 2,
+                      y: Math.random() - 0.5 * 2,
+                    },
+                    color: " #09b648  ",
+                    radius: Math.random() * 3,
+                  })
+                );
+              }
+              setTimeout(() => {
+                missile1.splice(j, 1);
+                wave.ufos.splice(i, 1);
+                soundExplosionUfo();
+                explosions.splice(j, 1);
+                score++;
+                scoreCounter.textContent = score;
+              }, 0);
+            }
+          });
+          missile2.forEach((rocket, j) => {
+            if (
+              rocket.isPositionX() > ufo.isPositionX() &&
+              rocket.isPositionX() < ufo.isPositionX() + ufo.isWidth() &&
+              rocket.isPositionY() > ufo.isPositionY() &&
+              rocket.isPositionY() < ufo.isPositionY() + ufo.isHeight()
+            ) {
+              // ufo explosion
+              for (let i = 0; i < 20; i++) {
+                explosions.push(
+                  new Explosion({
+                    position: {
+                      x: ufo.isPositionX() + ufo.isWidth() / 2,
+                      y: ufo.isPositionY() + ufo.isHeight() / 2,
+                    },
+                    speed: {
+                      x: (Math.random() - 0.5) * 2,
+                      y: Math.random() - 0.5 * 2,
+                    },
+                    color: "yellow",
+                    radius: Math.random() * 3,
+                  })
+                );
+              }
+              setTimeout(() => {
+                missile2.splice(j, 1);
+                wave.ufos.splice(i, 1);
+                soundExplosionUfo();
+                explosions.splice(j, 1);
+                score++;
+                scoreCounter.textContent = score;
+              }, 0);
+            }
+          });
         });
       });
-    });
+}
+function spliceMissiles(){
     if (missile1.length === 80) {
-      missile1.splice(3);
-    }
-    if (missile2.length === 80) {
-      missile2.splice(3);
-    }
-    if (explosions.length > 100) {
-      explosions.splice(20, 60);
-    }
-    missile1.forEach((rocket) => {
-      rocket.refresh();
-    });
-    missile2.forEach((rocket) => {
-      rocket.refresh();
-    });
+        missile1.splice(3);
+      }
+      if (missile2.length === 80) {
+        missile2.splice(3);
+      }
+      if (explosions.length > 100) {
+        explosions.splice(20, 60);
+      }
+      missile1.forEach((rocket) => {
+        rocket.refresh();
+      });
+      missile2.forEach((rocket) => {
+        rocket.refresh();
+      });
+}
+function directionKeys(){
     if (
-      (key.ArrowRight.pressed || key.d.pressed) &&
-      player.position.x + player.width <= canvas.width
-    )
-      player.speed.x = 9;
-    else if ((key.ArrowLeft.pressed || key.q.pressed) && player.position.x >= 0)
-      player.speed.x = -9;
-    else player.speed.x = 0;
+        (key.ArrowRight.pressed || key.d.pressed) &&
+        player.position.x + player.width <= canvas.width
+      )
+        player.speed.x = 9;
+      else if ((key.ArrowLeft.pressed || key.q.pressed) && player.position.x >= 0)
+        player.speed.x = -9;
+      else player.speed.x = 0;  
+}
 
+function winner(){
     if (
-      (score >= 15 && game.level === "easyMode") ||
-      (score >= 50 && game.level === "hardMode")
-    ) {
-      setTimeout(() => {
-        game.active = false;
-      }, 500);
-      setTimeout(() => {
-        soundWinGame();
-        winnerLog();
-      }, 1500);
-    }
+        (score >= 15 && game.level === "easyMode") ||
+        (score >= 50 && game.level === "hardMode")
+      ) {
+        setTimeout(() => {
+          game.active = false;
+        }, 500);
+        setTimeout(() => {
+          soundWinGame();
+          winnerLog();
+        }, 1500);
+      }
+}
+
+
+
+  // here is the engine of the game with frames ! =)
+  const animation = () => {
+    id = requestAnimationFrame(animation);
+    if (!game.active) return;
+    clearCanvas();
+    player.refresh();
+    colissionExplision()
+    spliceMissiles()
+    directionKeys()
+    winner()
   };
 
   animation();
