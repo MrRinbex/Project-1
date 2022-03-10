@@ -362,22 +362,25 @@ btnLvl.addEventListener("click", ()=>{
 
 
 
-startBtn.addEventListener('click', () => {
-    clickEffect()
-    soundPause()
-    readyLog()
-    soundReadyGo()
-    setTimeout(()=>{
-        restartLog()
-    },1000)
-    setTimeout(()=>{
-        empltyLog()
-    },2000)
-    game.active = true
-    if(game.level === "easyMode"){
-        texture.textContent = `Reach 15 points to win, good luck... `    
-    }else if(game.level === "hardMode"){
-        texture.textContent = `Reach 50 points to win, good luck... `    
+startBtn.addEventListener('click', () => { 
+    if(player.health === 100){
+
+        clickEffect()
+        soundPause()
+        readyLog()
+        soundReadyGo()
+        setTimeout(()=>{
+            restartLog()
+        },1000)
+        setTimeout(()=>{
+            empltyLog()
+        },2000)
+        game.active = true
+        if(game.level === "easyMode"){
+            texture.textContent = `Reach 15 points to win, good luck... `    
+        }else if(game.level === "hardMode"){
+            texture.textContent = `Reach 50 points to win, good luck... `    
+        }
     }
 })
 
