@@ -38,7 +38,7 @@ main{
     margin-right: 15vmin;
     padding-top: 3vmin;
     padding-bottom: 3vmin;
-    height: 650px;
+    min-height: 650px;
 }
     /* need adjust height for 2 block presentation and game-platform */
 #presentation{
