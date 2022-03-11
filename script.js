@@ -147,7 +147,7 @@ window.onload = () => {
         this.height = image.height * this.ref;
         this.position = {
           x: player.position ? player.position.x - this.width + 65 : canvas.width / 2 - (3 * this.width) / 2 + 65 ,
-          y: player.position ? player.position.y - this.height + 80 : canvas.height - 2 (3 * this.height) + 5
+          y: player.position ? player.position.y - this.height + 80 : canvas.height - this.height + 5
         };
       };
     }
@@ -195,7 +195,7 @@ window.onload = () => {
         this.height = image.height * this.ref;
         this.position = {
           x: player.position ? player.position.x - this.width + 35 : canvas.width / 2 - (3 * this.width) / 2 + 65 ,
-          y: player.position ? player.position.y - this.height + 80 : canvas.height - 2 (3 * this.height) + 5,
+          y: player.position ? player.position.y - this.height + 80 : canvas.height - this.height + 5,
         };
       };
       this.speed = {
